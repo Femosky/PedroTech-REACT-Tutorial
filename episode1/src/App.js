@@ -1,36 +1,61 @@
 import './App.css';
-import { User } from './Users';
-import { planets } from './Planets';
-
-const age = 15;
-
-age >= 18 ? console.log('A') : console.log('B');
+import { useState } from 'react';
+import { Task } from './Task';
 
 function App() {
-    // const users = [
-    //     { name: 'Pedro', age: 21 },
-    //     { name: 'Jake', age: 25 },
-    //     { name: 'Jessica', age: 45 },
-    // ];
-    // return (
-    //     <div className="App">
-    //         {users.map((user, key) => {
-    //             return <User name={user.name} age={user.age} />;
-    //         })}
-    //     </div>
-    // );
+    const [todoList, setTodoList] = useState([]);
+    const [newTask, setNewTask] = useState('');
+
+    function handleChange(e) {
+        setNewTask(e.target.value);
+    }
+
+    function addTask() {
+        const task = {
+            id: todoList.length === 0 ? 1 : todoList[todoList.length - 1].id + 1,
+            taskName: newTask,
+            completed: false,
+        };
+        setTodoList([...todoList, task]);
+    }
+
+    function deleteTask(id) {
+        setTodoList(todoList.filter((task) => task.id !== id));
+    }
+
+    function completeTask(id) {
+        setTodoList(
+            todoList.map((task) => {
+                if (task.id === id) {
+                    return { ...task, completed: true };
+                } else {
+                    return task;
+                }
+            })
+        );
+    }
 
     return (
         <div className="App">
-            {planets.map((planet) => {
-                return <div>{planet.isGasPlanet ? planet.name : ''}</div>;
-            })}
+            <div className="addTask">
+                <input onChange={handleChange} type="text" />
+                <button onClick={addTask}>Add Task</button>
+            </div>
+            <div className="list">
+                {todoList.map((task) => {
+                    return (
+                        <Task
+                            taskName={task.taskName}
+                            id={task.id}
+                            completed={task.completed}
+                            deleteTask={deleteTask}
+                            completeTask={completeTask}
+                        />
+                    );
+                })}
+            </div>
         </div>
     );
 }
 
 export default App;
-
-// function App() {
-//     return <div className='App'></div>;
-// }
